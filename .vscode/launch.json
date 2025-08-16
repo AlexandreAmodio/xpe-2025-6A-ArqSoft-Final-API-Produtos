@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (web)",
+            "type": "coreclr",
+            "request": "launch",
+            // "preLaunchTask": "build",
+            "program": "${workspaceFolder}/ProdutosApi/bin/Debug/net9.0/ProdutosApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/ProdutosApi",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openBrowser",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger" // Example for opening Swagger UI
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}
