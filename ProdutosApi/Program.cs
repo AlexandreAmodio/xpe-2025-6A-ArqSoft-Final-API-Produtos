@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProdutosApi.Models;
+using ProdutosApi.Repository;
+using ProdutosApi.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +12,10 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 //  builder.Services.AddOpenApiDocument();
-builder.Services.AddDbContext<ProdutoContext>(opt =>
+builder.Services.AddDbContext<ProdutoRepository>(opt =>
     opt.UseInMemoryDatabase("ProdutosDb"));
+
+builder.Services.AddTransient<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
 
