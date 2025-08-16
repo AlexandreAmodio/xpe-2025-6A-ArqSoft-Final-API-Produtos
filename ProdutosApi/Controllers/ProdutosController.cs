@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProdutosApi.Models;
-using ProdutosApi.Repository;
+using ProdutosApi.Service;
 
 namespace ProdutosApi.Controllers
 {
@@ -14,25 +13,25 @@ namespace ProdutosApi.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly ProdutoRepository _context;
+        private readonly IProdutoService _service;
 
-        public ProdutosController(ProdutoRepository context)
+        public ProdutosController(IProdutoService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Produtos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos()
         {
-            return await _context.Produtos.ToListAsync();
+            return await _service.listarTodos();
         }
 
         // GET: api/Produtos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Produto>> GetProduto(long id)
         {
-            var produto = await _context.Produtos.FindAsync(id);
+            var produto = await _service.buscarPorId(id);
 
             if (produto == null)
             {
@@ -52,15 +51,14 @@ namespace ProdutosApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(produto).State = EntityState.Modified;
-
+            Produto produtoUptated = null;
             try
             {
-                await _context.SaveChangesAsync();
+                produtoUptated = await _service.salvar(produto);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ProdutoExists(id))
+                if (produtoUptated == null)
                 {
                     return NotFound();
                 }
@@ -78,10 +76,7 @@ namespace ProdutosApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Produto>> PostProduto(Produto produto)
         {
-            _context.Produtos.Add(produto);
-            await _context.SaveChangesAsync();
-
-            // return CreatedAtAction("GetProduto", new { id = produto.Id }, produto);
+            await _service.inserir(produto);
             return CreatedAtAction(nameof(GetProduto), new { id = produto.Id }, produto);
         }
 
@@ -89,21 +84,14 @@ namespace ProdutosApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduto(long id)
         {
-            var produto = await _context.Produtos.FindAsync(id);
-            if (produto == null)
+            var produto = await _service.deletar(id);
+            if (produto == false)
             {
                 return NotFound();
             }
 
-            _context.Produtos.Remove(produto);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool ProdutoExists(long id)
-        {
-            return _context.Produtos.Any(e => e.Id == id);
-        }
     }
 }
