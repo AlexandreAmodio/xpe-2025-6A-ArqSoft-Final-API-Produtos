@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 //  builder.Services.AddOpenApiDocument();
-builder.Services.AddDbContext<TodoContext>(opt =>
+builder.Services.AddDbContext<ProdutoContext>(opt =>
     opt.UseInMemoryDatabase("ProdutosDb"));
 
 var app = builder.Build();

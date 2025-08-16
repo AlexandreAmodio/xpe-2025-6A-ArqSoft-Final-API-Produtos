@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProdutosApi.Models;
 
-public class TodoContext : DbContext
+public class ProdutoContext : DbContext
 {
-    public TodoContext(DbContextOptions<TodoContext> options)
+    public ProdutoContext(DbContextOptions<ProdutoContext> options)
         : base(options)
     {
     }
 
-    public DbSet<TodoItem> TodoItems { get; set; } = null!;
+    public DbSet<Produto> Produtos { get; set; } = null!;
 }
